@@ -10,7 +10,6 @@ import GButton from './Components/GButton';
 
 
 
-
 export const metadata = {
     title: 'Codigos de desbloqueo | Asoge Labs',
     description: "Genera un código de desbloqueo que te permite acceder a nuestros bots de Telegram de forma rápida, segura y gratuita.",

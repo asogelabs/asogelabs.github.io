@@ -19,14 +19,14 @@ export const metadata = {
   creator: 'asogelabs',
   publisher: 'asogelabs',
   icons: {
-      icon: Data.favicon,
+    icon: Data.favicon,
   },
 };
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <head>
-        <meta name="google-adsense-account" content="ca-pub-6072835343724077"/>
+        <meta name="google-adsense-account" content="ca-pub-6072835343724077" />
       </head>
       <body>
         <Navegation />

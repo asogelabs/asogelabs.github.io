@@ -1,8 +1,8 @@
 // src/app/team/Components/Team.jsx
 "use client";
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FaLinkedin, FaGithub, FaTwitter, FaArrowRight } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaLinkedin, FaGithub, FaTwitter, FaArrowRight, FaGlobe } from 'react-icons/fa';
 import Image from 'next/image';
 
 import Data from "../../constants.json";
@@ -15,30 +15,75 @@ export default function Team() {
     // Estado para el miembro activo en móvil
     const [activeIndex, setActiveIndex] = useState(0);
 
-    // Datos de los miembros del equipo
+    // Estado para controlar la imagen actual en el carrusel
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Estado para controlar la animación de transición
+    const [isTransitioning, setIsTransitioning] = useState(false);
+
+    // Datos de los miembros del equipo con múltiples imágenes
     const teamMembers = [
         {
             id: 1,
-            name: '@rodolfocasan',
+            name: 'Rodolfo Casan',
             role: 'Desarrollador Full Stack',
-            image: `${Data.rodolfocasan}`,
-            description: 'Desarrollador y mantenedor de varios bots de telegram y aplicaciones móviles, especializado en Linux y Machine Learning. Apasionado por la automatización y la inteligencia artificial con experiencia en desarrollo de software y proyectos open source.',
+            // Array de imágenes para el carrusel
+            images: [
+                Data.rodolfocasan_local_01,
+                Data.rodolfocasan_local_02,
+                Data.rodolfocasan_local_03
+            ],
+            description: 'Fundador y desarrollador, especializado en Linux y Machine Learning. Creador de la infraestructura de Asoge Labs (criptografía y servidores) y diseñador de su UI web. Apasionado por la automatización, la creación de software útil y la Inteligencia Artificial.',
             social: {
                 linkedin: 'https://linkedin.com/in/christcastr',
                 github: 'https://github.com/rodolfocasan',
-                twitter: 'https://twitter.com/rodolfocasan'
+                twitter: 'https://twitter.com/rodolfocasan',
+                website: 'https://rodolfocasan.github.io/'
             }
         }
     ];
 
+    // Función para cambiar la imagen con una transición suave
+    const changeImage = () => {
+        // Marcar que estamos en transición
+        setIsTransitioning(true);
+
+        // Esperar a que termine el fade-out antes de cambiar la imagen
+        setTimeout(() => {
+            // Obtener el número máximo de imágenes del miembro actual
+            const maxImages = teamMembers[activeIndex].images.length;
+
+            // Cambiar al siguiente índice o volver al inicio si llegamos al final
+            setCurrentImageIndex(prevIndex => (prevIndex + 1) % maxImages);
+
+            // Quitar el estado de transición después de un breve retraso
+            setTimeout(() => {
+                setIsTransitioning(false);
+            }, 50);
+        }, 200); // Este tiempo debe ser igual a la duración del fade-out
+    };
+
+    // Efecto para cambiar automáticamente las imágenes cada 2 segundos
+    useEffect(() => {
+        const interval = setInterval(() => {
+            changeImage();
+        }, 2000);
+
+        return () => clearInterval(interval); // Limpiar intervalo al desmontar
+    }, [activeIndex, teamMembers, isTransitioning]);
+
     // Cambia al siguiente miembro en vista móvil
     const nextMember = () => {
         setActiveIndex((prevIndex) => (prevIndex + 1) % teamMembers.length);
+        // Reiniciar el índice de imagen al cambiar de miembro
+        setCurrentImageIndex(0);
     };
 
     // Cambia al miembro anterior en vista móvil
     const prevMember = () => {
         setActiveIndex((prevIndex) => (prevIndex - 1 + teamMembers.length) % teamMembers.length);
+        // Reiniciar el índice de imagen al cambiar de miembro
+        setCurrentImageIndex(0);
     };
 
     // Animaciones
@@ -47,6 +92,10 @@ export default function Team() {
         animate: { opacity: 1, y: 0 },
         exit: { opacity: 0, y: 60 }
     };
+
+    // Animaciones para carrusel de imágenes con transiciones suaves
+    const fadeIn = { opacity: 1 };
+    const fadeOut = { opacity: 0 };
 
     return (
         <section className="relative py-20 bg-gradient-to-b from-gray-900 to-black overflow-hidden">
@@ -88,16 +137,29 @@ export default function Team() {
                         transition={{ duration: 0.5 }}
                         className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-700"
                     >
-                        {/* Imagen con superposición de degradado */}
+                        {/* Imagen con superposición de degradado y carrusel */}
                         <div className="relative h-72 w-full">
-                            <Image
-                                src={teamMembers[activeIndex].image}
-                                alt={teamMembers[activeIndex].name}
-                                fill
-                                style={{ objectFit: 'cover' }}
-                                className="opacity-90"
-                                sizes="100vw"
-                            />
+                            {/* Carrusel de imágenes con transición mejorada */}
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={currentImageIndex}
+                                    initial={fadeOut}
+                                    animate={fadeIn}
+                                    exit={fadeOut}
+                                    transition={{ duration: 0.5 }}
+                                    className="absolute inset-0"
+                                >
+                                    <Image
+                                        src={teamMembers[activeIndex].images[currentImageIndex]}
+                                        alt={`${teamMembers[activeIndex].name} - Imagen ${currentImageIndex + 1}`}
+                                        fill
+                                        style={{ objectFit: 'cover' }}
+                                        className="opacity-90"
+                                        sizes="100vw"
+                                    />
+                                </motion.div>
+                            </AnimatePresence>
+
                             {/* Degradado sobre la imagen para mejorar visibilidad del texto */}
                             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
 
@@ -131,6 +193,11 @@ export default function Team() {
                                     {teamMembers[activeIndex].social.twitter && (
                                         <a href={teamMembers[activeIndex].social.twitter} className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white hover:bg-blue-500 transition-colors duration-300">
                                             <FaTwitter size={18} />
+                                        </a>
+                                    )}
+                                    {teamMembers[activeIndex].social.website && (
+                                        <a href={teamMembers[activeIndex].social.website} className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white hover:bg-green-600 transition-colors duration-300">
+                                            <FaGlobe size={18} />
                                         </a>
                                     )}
                                 </div>
@@ -183,17 +250,43 @@ export default function Team() {
                                 className={`flex flex-col lg:flex-row gap-8 items-center bg-gradient-to-r from-gray-800/80 to-gray-900/80 rounded-2xl p-8 backdrop-blur-sm border border-gray-700/30 shadow-xl hover:shadow-purple-500/5 transition-all duration-500 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''
                                     }`}
                             >
-                                {/* Contenedor de la imagen - Sin overlay coloreado */}
+                                {/* Contenedor de la imagen con carrusel */}
                                 <div className="relative w-full lg:w-1/3 aspect-square rounded-xl overflow-hidden shadow-lg">
-                                    <Image
-                                        src={member.image}
-                                        alt={member.name}
-                                        fill
-                                        style={{ objectFit: 'cover' }}
-                                        className="transition-transform duration-700 hover:scale-105"
-                                        sizes="(max-width: 768px) 100vw, 33vw"
-                                    />
-                                    {/* Eliminado el overlay coloreado */}
+                                    {/* Carrusel de imágenes con transición mejorada */}
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={currentImageIndex}
+                                            initial={fadeOut}
+                                            animate={fadeIn}
+                                            exit={fadeOut}
+                                            transition={{ duration: 0.5 }}
+                                            className="absolute inset-0"
+                                        >
+                                            <Image
+                                                src={member.images[currentImageIndex]}
+                                                alt={`${member.name} - Imagen ${currentImageIndex + 1}`}
+                                                fill
+                                                style={{ objectFit: 'cover' }}
+                                                className="transition-transform duration-700 hover:scale-105"
+                                                sizes="(max-width: 768px) 100vw, 33vw"
+                                            />
+                                        </motion.div>
+                                    </AnimatePresence>
+
+                                    {/* Indicadores del carrusel de imágenes para desktop */}
+                                    {member.images.length > 1 && (
+                                        <div className="absolute bottom-3 left-0 w-full flex justify-center space-x-2">
+                                            {member.images.map((_, imgIndex) => (
+                                                <span
+                                                    key={imgIndex}
+                                                    className={`block h-2 rounded-full transition-all duration-300 ${imgIndex === currentImageIndex
+                                                            ? "w-6 bg-purple-500"
+                                                            : "w-2 bg-gray-400/60"
+                                                        }`}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Contenido e información del miembro */}
@@ -210,7 +303,7 @@ export default function Team() {
                                     {/* Descripción del miembro */}
                                     <p className="text-gray-300 text-lg leading-relaxed mb-6">{member.description}</p>
 
-                                    {/* Redes sociales - Solo mostrar las que tienen enlace */}
+                                    {/* Redes sociales - Incluyendo sitio web */}
                                     <div className="flex space-x-4">
                                         {member.social.linkedin && (
                                             <a href={member.social.linkedin} className="w-12 h-12 rounded-full bg-gray-700/50 flex items-center justify-center text-white hover:bg-blue-600 transform hover:scale-110 transition-all duration-300">
@@ -225,6 +318,11 @@ export default function Team() {
                                         {member.social.twitter && (
                                             <a href={member.social.twitter} className="w-12 h-12 rounded-full bg-gray-700/50 flex items-center justify-center text-white hover:bg-blue-500 transform hover:scale-110 transition-all duration-300">
                                                 <FaTwitter size={20} />
+                                            </a>
+                                        )}
+                                        {member.social.website && (
+                                            <a href={member.social.website} className="w-12 h-12 rounded-full bg-gray-700/50 flex items-center justify-center text-white hover:bg-green-600 transform hover:scale-110 transition-all duration-300">
+                                                <FaGlobe size={20} />
                                             </a>
                                         )}
                                     </div>

@@ -64,7 +64,7 @@ const Introduction = () => {
                     >
                         <p>
                             Genera un <span className="text-blue-400 font-semibold">código de desbloqueo</span> que te
-                            permite acceder a nuestros bots de Telegram de forma rápida, segura y gratuita.
+                            permite acceder a nuestros bots de WhatsApp o Telegram de forma rápida, segura y gratuita.
                         </p>
                     </motion.div>
 
@@ -92,7 +92,7 @@ const Introduction = () => {
                         <ol className="list-decimal list-inside text-white/70 space-y-2">
                             <li>Genera tu código de desbloqueo (desde el botón de abajo).</li>
                             <li>Copia el código generado haciendo click sobre él.</li>
-                            <li>Pégalo en el bot de Telegram que deseas usar.</li>
+                            <li>Pégalo en el bot de WhatsApp o Telegram que deseas usar.</li>
                         </ol>
                     </motion.div>
 

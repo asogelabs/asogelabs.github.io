@@ -1,6 +1,9 @@
 {
-    "favicon":"https://raw.githubusercontent.com/asogelabs/media/main//Logos/logo_01_noBackground.png",
+    "favicon":"https://raw.githubusercontent.com/asogelabs/media/main//Logos/logo_01_resized_noBackground.png",
     "favicon_glb":"https://raw.githubusercontent.com/asogelabs/media/main//Logos/logo_01_3d.glb",
 
-    "rodolfocasan":"https://raw.githubusercontent.com/rodolfocasan/fetch-media/main/photos/rodolfo_casan.webp"
+    "rodolfocasan":"https://raw.githubusercontent.com/rodolfocasan/fetch-media/main/photos/rodolfo_casan.webp",
+    "rodolfocasan_local_01":"/Team/rc_01.jpg",
+    "rodolfocasan_local_02":"/Team/rc_02.webp",
+    "rodolfocasan_local_03":"/Team/rc_03.webp"
 }

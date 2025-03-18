@@ -3,9 +3,13 @@
 const nextConfig = {
     images: {
         unoptimized: true, // Se desactiva la optimización de imagen de NextJS
+        /* domains: [
+            'www.highperformancecpmgate.com',
+            'ads.servenobid.com'
+        ], */
     },
 
-    basePath: "/",
+    //basePath: "/",
     output: "export",
     reactStrictMode: true,
 };
